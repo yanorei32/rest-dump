@@ -1,10 +1,11 @@
 package main
 
 import (
-	"log"
-	"time"
-	"net/http"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"time"
 )
 
 type Handler struct {
@@ -36,14 +37,18 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	s := &http.Server {
-		Addr: ":8080",
-		Handler: &Handler{},
-		ReadTimeout: time.Second,
-		WriteTimeout: time.Second,
+	if len(os.Args) != 2 {
+		log.Fatal("./rest-dump [port]")
+	}
+
+
+	s := &http.Server{
+		Addr:           os.Args[1],
+		Handler:        &Handler{},
+		ReadTimeout:    time.Second,
+		WriteTimeout:   time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
 	log.Fatal(s.ListenAndServe())
 }
-
